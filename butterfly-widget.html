@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Butterfly Animation</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: transparent;
+    }
+    #butterfly {
+      position: absolute;
+      width: 60px;
+      z-index: 1000;
+      display: block;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.7));
+      animation: float 3s ease-in-out infinite;
+      cursor: pointer;
+    }
+    @keyframes float {
+      0% { transform: translate(-50%, -50%) translateY(0); }
+      50% { transform: translate(-50%, -50%) translateY(-10px); }
+      100% { transform: translate(-50%, -50%) translateY(0); }
+    }
+    .trail-dot {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: rgba(255, 182, 193, 0.6);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: fadeOut 1s forwards;
+      filter: blur(1px);
+    }
+    @keyframes fadeOut {
+      from { opacity: 1; transform: scale(1); }
+      to { opacity: 0; transform: scale(0.5); }
+    }
+  </style>
+</head>
+<body>
+  <img id="butterfly" src="https://ik.imagekit.io/nbcutfoay/butterfly%20vid.gif" alt="butterfly" />
+
+  <script>
+    const butterfly = document.getElementById('butterfly');
+
+    function createTrail(x, y) {
+      const dot = document.createElement('div');
+      dot.className = 'trail-dot';
+      dot.style.left = x + 'px';
+      dot.style.top = y + 'px';
+      document.body.appendChild(dot);
+      setTimeout(() => dot.remove(), 1000);
+    }
+
+    butterfly.addEventListener('click', () => {
+      let step = 0;
+      const maxSteps = 60;
+      const startY = butterfly.offsetTop;
+      const endY = 40;
+
+      const interval = setInterval(() => {
+        step++;
+        const progress = step / maxSteps;
+        const newY = startY + (endY - startY) * progress;
+        butterfly.style.top = newY + 'px';
+        const trailX = butterfly.offsetLeft + 30;
+        const trailY = newY + 30;
+        createTrail(trailX, trailY);
+        if (step >= maxSteps) {
+          clearInterval(interval);
+          window.parent.postMessage('butterflyScrolled', '*');
+        }
+      }, 16);
+    });
+  </script>
+</body>
+</html>
