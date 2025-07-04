@@ -57,23 +57,18 @@
       font-size: 1.2em;
       color: #fff;
       opacity: 0;
-      animation: fadeIn 3s ease-in forwards;
-      animation-delay: 6s;
-    }
-
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
+      z-index: 5;
+      transition: opacity 2s ease-in;
     }
   </style>
 </head>
 <body>
   <img src="https://ik.imagekit.io/nbcutfoay/butterfly%20vid.gif" alt="Butterfly" class="butterfly" id="butterfly"/>
-  <div class="message">Every flight begins here. This is where the rising takes root.</div>
+  <div class="message" id="message">Every flight begins here. This is where the rising takes root.</div>
 
   <script>
     const butterfly = document.getElementById('butterfly');
+    const message = document.getElementById('message');
 
     function createTrail(x, y) {
       const dot = document.createElement('div');
@@ -96,12 +91,20 @@
         butterfly.style.top = `${y}px`;
         createTrail(x + 30, y + 20);
 
-        if (x > window.innerWidth + 100) {
+        if (x > window.innerWidth + 50) {
           clearInterval(interval);
-          document.querySelector('.message').style.display = 'block';
+
+          // Show message
+          message.style.opacity = 1;
+
+          // Auto-scroll
           setTimeout(() => {
-            window.parent.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
-          }, 1000);
+            if (window.parent) {
+              window.parent.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+            } else {
+              window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+            }
+          }, 1500);
         }
       }, 30);
     }
