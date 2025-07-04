@@ -20,15 +20,20 @@
       height: auto;
       transform: translate(-50%, -50%);
       cursor: pointer;
-      animation: float 2s infinite ease-in-out;
+      animation: float 2s infinite ease-in-out, glow 2s infinite ease-in-out;
       z-index: 10;
-      filter: drop-shadow(0 0 12px rgba(255, 182, 193, 0.6));
     }
 
     @keyframes float {
       0% { transform: translate(-50%, -50%) rotate(0deg); }
       50% { transform: translate(-50%, -55%) rotate(2deg); }
       100% { transform: translate(-50%, -50%) rotate(0deg); }
+    }
+
+    @keyframes glow {
+      0% { filter: drop-shadow(0 0 6px rgba(255, 182, 193, 0.3)); }
+      50% { filter: drop-shadow(0 0 16px rgba(255, 182, 193, 0.8)); }
+      100% { filter: drop-shadow(0 0 6px rgba(255, 182, 193, 0.3)); }
     }
 
     .trail {
@@ -64,15 +69,35 @@
     .message.show {
       opacity: 1;
     }
+
+    .click-text {
+      position: absolute;
+      top: 60%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1em;
+      color: white;
+      opacity: 0.8;
+      animation: pulse 1.5s infinite;
+      font-family: 'Helvetica Neue', sans-serif;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.8; }
+      50% { opacity: 0.3; }
+      100% { opacity: 0.8; }
+    }
   </style>
 </head>
 <body>
   <img src="https://ik.imagekit.io/nbcutfoay/butterfly%20vid.gif" alt="Butterfly" class="butterfly" id="butterfly"/>
+  <p class="click-text" id="clickText">Click to begin the flight</p>
   <div class="message" id="message">Every flight begins here. This is where the rising takes root.</div>
 
   <script>
     const butterfly = document.getElementById('butterfly');
     const message = document.getElementById('message');
+    const clickText = document.getElementById('clickText');
 
     function createTrail(x, y) {
       const dot = document.createElement('div');
@@ -85,6 +110,8 @@
 
     function flyAcross() {
       butterfly.style.animation = 'none';
+      clickText.style.display = 'none';
+
       let x = window.innerWidth / 2;
       let y = window.innerHeight / 2;
       let dx = 5;
@@ -102,7 +129,7 @@
           // Show message
           message.classList.add('show');
 
-          // Scroll after message appears
+          // Auto-scroll
           setTimeout(() => {
             if (window.parent) {
               window.parent.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
