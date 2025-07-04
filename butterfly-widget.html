@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Butterfly Animation</title>
+  <title>Interactive Butterfly</title>
   <style>
     body {
       margin: 0;
@@ -14,29 +14,21 @@
 
     .butterfly {
       position: absolute;
-      top: 40%;
-      left: -100px;
+      top: 50%;
+      left: 50%;
       width: 100px;
       height: auto;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      animation: float 2s infinite ease-in-out;
       z-index: 10;
-      animation: fly 5s ease-in-out forwards;
-      filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.7));
+      filter: drop-shadow(0 0 12px rgba(255, 182, 193, 0.6));
     }
 
-    @keyframes fly {
-      0% {
-        left: -100px;
-        transform: rotateY(0deg);
-      }
-      50% {
-        top: 30%;
-        transform: rotateY(180deg);
-      }
-      100% {
-        left: 100%;
-        top: 50%;
-        transform: rotateY(360deg);
-      }
+    @keyframes float {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      50% { transform: translate(-50%, -55%) rotate(2deg); }
+      100% { transform: translate(-50%, -50%) rotate(0deg); }
     }
 
     .trail {
@@ -47,6 +39,7 @@
       background: rgba(255, 182, 193, 0.4);
       box-shadow: 0 0 10px rgba(255, 182, 193, 0.6);
       animation: fade 1s linear forwards;
+      pointer-events: none;
     }
 
     @keyframes fade {
@@ -58,13 +51,14 @@
 
     .message {
       position: absolute;
-      top: 70%;
+      bottom: 40px;
       width: 100%;
       text-align: center;
       font-size: 1.2em;
       color: #fff;
       opacity: 0;
-      animation: fadeIn 3s ease-in 6s forwards;
+      animation: fadeIn 3s ease-in forwards;
+      animation-delay: 6s;
     }
 
     @keyframes fadeIn {
@@ -76,7 +70,6 @@
 </head>
 <body>
   <img src="https://ik.imagekit.io/nbcutfoay/butterfly%20vid.gif" alt="Butterfly" class="butterfly" id="butterfly"/>
-
   <div class="message">Every flight begins here. This is where the rising takes root.</div>
 
   <script>
@@ -91,21 +84,29 @@
       setTimeout(() => dot.remove(), 1000);
     }
 
-    // Move butterfly and trail effect
-    let pos = 0;
-    const interval = setInterval(() => {
-      const rect = butterfly.getBoundingClientRect();
-      if (pos > window.innerWidth + 100) {
-        clearInterval(interval);
-        document.querySelector('.message').style.display = 'block';
-        setTimeout(() => {
-          window.parent.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
-        }, 1000);
-        return;
-      }
-      createTrail(rect.left + 50, rect.top + 25);
-      pos += 5;
-    }, 50);
+    function flyAcross() {
+      butterfly.style.animation = 'none';
+      let x = window.innerWidth / 2;
+      let y = window.innerHeight / 2;
+      let dx = 5;
+
+      const interval = setInterval(() => {
+        x += dx;
+        butterfly.style.left = `${x}px`;
+        butterfly.style.top = `${y}px`;
+        createTrail(x + 30, y + 20);
+
+        if (x > window.innerWidth + 100) {
+          clearInterval(interval);
+          document.querySelector('.message').style.display = 'block';
+          setTimeout(() => {
+            window.parent.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+          }, 1000);
+        }
+      }, 30);
+    }
+
+    butterfly.addEventListener('click', flyAcross);
   </script>
 </body>
 </html>
