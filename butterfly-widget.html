@@ -5,80 +5,107 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Butterfly Animation</title>
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
       overflow: hidden;
       background: transparent;
+      font-family: 'Helvetica Neue', sans-serif;
     }
-    #butterfly {
+
+    .butterfly {
       position: absolute;
-      width: 60px;
-      z-index: 1000;
-      display: block;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      top: 40%;
+      left: -100px;
+      width: 100px;
+      height: auto;
+      z-index: 10;
+      animation: fly 5s ease-in-out forwards;
       filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.7));
-      animation: float 3s ease-in-out infinite;
-      cursor: pointer;
     }
-    @keyframes float {
-      0% { transform: translate(-50%, -50%) translateY(0); }
-      50% { transform: translate(-50%, -50%) translateY(-10px); }
-      100% { transform: translate(-50%, -50%) translateY(0); }
+
+    @keyframes fly {
+      0% {
+        left: -100px;
+        transform: rotateY(0deg);
+      }
+      50% {
+        top: 30%;
+        transform: rotateY(180deg);
+      }
+      100% {
+        left: 100%;
+        top: 50%;
+        transform: rotateY(360deg);
+      }
     }
-    .trail-dot {
+
+    .trail {
       position: absolute;
       width: 8px;
       height: 8px;
-      background: rgba(255, 182, 193, 0.6);
       border-radius: 50%;
-      pointer-events: none;
-      animation: fadeOut 1s forwards;
-      filter: blur(1px);
+      background: rgba(255, 182, 193, 0.4);
+      box-shadow: 0 0 10px rgba(255, 182, 193, 0.6);
+      animation: fade 1s linear forwards;
     }
-    @keyframes fadeOut {
-      from { opacity: 1; transform: scale(1); }
-      to { opacity: 0; transform: scale(0.5); }
+
+    @keyframes fade {
+      to {
+        opacity: 0;
+        transform: scale(2);
+      }
+    }
+
+    .message {
+      position: absolute;
+      top: 70%;
+      width: 100%;
+      text-align: center;
+      font-size: 1.2em;
+      color: #fff;
+      opacity: 0;
+      animation: fadeIn 3s ease-in 6s forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
     }
   </style>
 </head>
 <body>
-  <img id="butterfly" src="https://ik.imagekit.io/nbcutfoay/butterfly%20vid.gif" alt="butterfly" />
+  <img src="https://ik.imagekit.io/nbcutfoay/butterfly%20vid.gif" alt="Butterfly" class="butterfly" id="butterfly"/>
+
+  <div class="message">Every flight begins here. This is where the rising takes root.</div>
 
   <script>
     const butterfly = document.getElementById('butterfly');
 
     function createTrail(x, y) {
       const dot = document.createElement('div');
-      dot.className = 'trail-dot';
-      dot.style.left = x + 'px';
-      dot.style.top = y + 'px';
+      dot.className = 'trail';
+      dot.style.left = `${x}px`;
+      dot.style.top = `${y}px`;
       document.body.appendChild(dot);
       setTimeout(() => dot.remove(), 1000);
     }
 
-    butterfly.addEventListener('click', () => {
-      let step = 0;
-      const maxSteps = 60;
-      const startY = butterfly.offsetTop;
-      const endY = 40;
-
-      const interval = setInterval(() => {
-        step++;
-        const progress = step / maxSteps;
-        const newY = startY + (endY - startY) * progress;
-        butterfly.style.top = newY + 'px';
-        const trailX = butterfly.offsetLeft + 30;
-        const trailY = newY + 30;
-        createTrail(trailX, trailY);
-        if (step >= maxSteps) {
-          clearInterval(interval);
-          window.parent.postMessage('butterflyScrolled', '*');
-        }
-      }, 16);
-    });
+    // Move butterfly and trail effect
+    let pos = 0;
+    const interval = setInterval(() => {
+      const rect = butterfly.getBoundingClientRect();
+      if (pos > window.innerWidth + 100) {
+        clearInterval(interval);
+        document.querySelector('.message').style.display = 'block';
+        setTimeout(() => {
+          window.parent.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+        }, 1000);
+        return;
+      }
+      createTrail(rect.left + 50, rect.top + 25);
+      pos += 5;
+    }, 50);
   </script>
 </body>
 </html>
