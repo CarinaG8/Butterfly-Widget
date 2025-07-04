@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Interactive Butterfly</title>
+  <title>Butterfly Widget</title>
   <style>
     body {
       margin: 0;
@@ -61,7 +61,7 @@
       transition: opacity 2s ease-in;
     }
 
-    .show {
+    .message.show {
       opacity: 1;
     }
   </style>
@@ -95,15 +95,14 @@
         butterfly.style.top = `${y}px`;
         createTrail(x + 30, y + 20);
 
-        if (x > window.innerWidth + 50) {
+        if (x > window.innerWidth + 100) {
           clearInterval(interval);
+          butterfly.style.display = 'none';
 
           // Show message
-          setTimeout(() => {
-            message.classList.add('show');
-          }, 500); // slight delay before message
+          message.classList.add('show');
 
-          // Auto-scroll after message
+          // Scroll after message appears
           setTimeout(() => {
             if (window.parent) {
               window.parent.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
