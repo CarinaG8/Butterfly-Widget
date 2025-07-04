@@ -60,6 +60,10 @@
       z-index: 5;
       transition: opacity 2s ease-in;
     }
+
+    .show {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -95,16 +99,18 @@
           clearInterval(interval);
 
           // Show message
-          message.style.opacity = 1;
+          setTimeout(() => {
+            message.classList.add('show');
+          }, 500); // slight delay before message
 
-          // Auto-scroll
+          // Auto-scroll after message
           setTimeout(() => {
             if (window.parent) {
               window.parent.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
             } else {
               window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
             }
-          }, 1500);
+          }, 2000);
         }
       }, 30);
     }
